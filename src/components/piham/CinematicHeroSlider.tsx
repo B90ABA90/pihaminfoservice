@@ -69,6 +69,13 @@ export const CinematicHeroSlider = ({
   const py = useSpring(useTransform(my, [0, 1], [-14, 14]), { stiffness: 90, damping: 20 });
   const sheenX = useTransform(mx, [0, 1], ["0%", "100%"]);
   const sheenY = useTransform(my, [0, 1], ["0%", "100%"]);
+  // Hoisted hook (was inside JSX after a conditional render → caused
+  // "Rendered fewer hooks than expected" when isCoarse flipped).
+  const sheenBg = useTransform(
+    [sheenX, sheenY] as any,
+    ([x, y]: any) =>
+      `radial-gradient(420px circle at ${x} ${y}, hsl(0 0% 100% / 0.22), transparent 55%)`
+  );
 
   const onMove = (e: MouseEvent) => {
     if (isCoarse) return;
