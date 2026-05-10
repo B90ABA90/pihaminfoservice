@@ -206,13 +206,7 @@ export const CinematicHeroSlider = ({
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-0 mix-blend-overlay"
-            style={{
-              background: useTransform(
-                [sheenX, sheenY] as any,
-                ([x, y]: any) =>
-                  `radial-gradient(420px circle at ${x} ${y}, hsl(0 0% 100% / 0.22), transparent 55%)`
-              ),
-            }}
+            style={{ background: sheenBg }}
           />
         )}
 
