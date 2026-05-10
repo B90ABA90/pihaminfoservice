@@ -96,6 +96,12 @@ const TiltCard = ({ children }: { children: React.ReactNode }) => {
   const ry = useSpring(useTransform(mx, [0, 1], [-12, 12]), { stiffness: 150, damping: 18 });
   const sx = useSpring(useTransform(mx, [0, 1], ["0%", "100%"]), { stiffness: 200, damping: 25 });
   const sy = useSpring(useTransform(my, [0, 1], ["0%", "100%"]), { stiffness: 200, damping: 25 });
+  // IMPORTANT: every hook must be called unconditionally above any early return,
+  // otherwise React throws "Rendered fewer hooks than expected" when isMobile flips.
+  const overlayBg = useTransform(
+    [sx, sy] as any,
+    ([x, y]: any) => `radial-gradient(circle at ${x} ${y}, hsl(var(--accent) / 0.45), transparent 55%)`
+  );
   if (isMobile) return <div className="relative">{children}</div>;
   const onMove = (e: React.MouseEvent) => {
     const r = ref.current?.getBoundingClientRect();
@@ -116,12 +122,7 @@ const TiltCard = ({ children }: { children: React.ReactNode }) => {
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0 rounded-3xl mix-blend-overlay opacity-70"
-        style={{
-          background: useTransform(
-            [sx, sy] as any,
-            ([x, y]: any) => `radial-gradient(circle at ${x} ${y}, hsl(var(--accent) / 0.45), transparent 55%)`
-          ),
-        }}
+        style={{ background: overlayBg }}
       />
     </motion.div>
   );
