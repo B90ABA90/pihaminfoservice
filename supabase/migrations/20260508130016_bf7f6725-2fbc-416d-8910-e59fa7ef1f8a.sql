@@ -1,0 +1,1 @@
+DELETE FROM public.site_content WHERE key IN ('showcase.image1_url','showcase.image2_url','showcase.image3_url','showcase.image4_url','showcase.image5_url','showcase.image6_url','showcase.image1_title','showcase.image2_title','showcase.image3_title','showcase.image4_title','showcase.image5_title','showcase.image6_title');
