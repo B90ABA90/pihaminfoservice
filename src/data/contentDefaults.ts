@@ -14,6 +14,7 @@ import showcase3 from "@/assets/showcase-rehab-3.jpg";
 import showcase4 from "@/assets/showcase-rehab-4.jpg";
 import showcase5 from "@/assets/showcase-rehab-5.jpg";
 import showcase6 from "@/assets/showcase-rehab-6.jpg";
+import { networkPhotos } from "./networkPhotos";
 
 export const CONTENT_DEFAULTS: Record<string, string> = {
   // ---------- BRAND ----------
@@ -155,7 +156,7 @@ export const CONTENT_DEFAULTS: Record<string, string> = {
 
   // ---------- SERVICES — images éditables ----------
   "services.image_btp_url": construction,
-  "services.image_cablage_url": cabling,
+  "services.image_cablage_url": networkPhotos[0],
   "services.image_cctv_url": cctv,
   "services.image_incendie_url": fire,
   "services.image_fournitures_url": supply,
@@ -166,11 +167,14 @@ export const CONTENT_DEFAULTS: Record<string, string> = {
   "service_btp.gallery3_url": showcase2,
   "service_btp.gallery4_url": showcase3,
   "service_btp.gallery5_url": showcase4,
-  "service_cablage.gallery1_url": cabling,
-  "service_cablage.gallery2_url": showcase3,
-  "service_cablage.gallery3_url": showcase1,
-  "service_cablage.gallery4_url": showcase4,
-  "service_cablage.gallery5_url": showcase2,
+  "service_cablage.gallery1_url": networkPhotos[0],
+  "service_cablage.gallery2_url": networkPhotos[1],
+  "service_cablage.gallery3_url": networkPhotos[2],
+  "service_cablage.gallery4_url": networkPhotos[3],
+  "service_cablage.gallery5_url": networkPhotos[4],
+  "service_cablage.gallery6_url": networkPhotos[5],
+  "service_cablage.gallery7_url": networkPhotos[6],
+  "service_cablage.gallery8_url": networkPhotos[7],
   "service_cctv.gallery1_url": cctv,
   "service_cctv.gallery2_url": showcase2,
   "service_cctv.gallery3_url": showcase4,

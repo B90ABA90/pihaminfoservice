@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { resolveHeroStats } from "@/lib/heroStats";
 
 type Stat = { value: string; label: string };
 
@@ -27,31 +28,8 @@ const FIELDS: { key: string; label: string; multi?: boolean; placeholder?: strin
   { key: "hero.cta_secondary", label: "CTA secondaire — texte" },
 ];
 
-const DEFAULT_STATS: Stat[] = [
-  { value: "150+", label: "Projets livrés" },
-  { value: "12 ans", label: "d'expertise terrain" },
-  { value: "98%", label: "Clients fidélisés" },
-  { value: "24/7", label: "Support & maintenance" },
-];
-
 function parseStats(content: Record<string, string>): Stat[] {
-  try {
-    const raw = content["hero.stats_json"];
-    if (raw) {
-      const p = JSON.parse(raw);
-      if (Array.isArray(p)) {
-        return p.map((s: any) => ({ value: String(s?.value ?? s?.v ?? ""), label: String(s?.label ?? s?.l ?? "") }));
-      }
-    }
-  } catch { /* ignore */ }
-  // fallback to legacy individual keys
-  const fallback: Stat[] = [];
-  for (let i = 1; i <= 4; i++) {
-    const v = content[`hero.stat${i}_value`];
-    const l = content[`hero.stat${i}_label`];
-    if (v || l) fallback.push({ value: v ?? "", label: l ?? "" });
-  }
-  return fallback.length ? fallback : DEFAULT_STATS;
+  return resolveHeroStats(content).map((s) => ({ value: s.v, label: s.l }));
 }
 
 export const HeroEditor = ({ content, updateKey, uploadForKey, uploadingFor }: Props) => {

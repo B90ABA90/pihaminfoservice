@@ -42,28 +42,14 @@ export const BannerTicker = () => {
 
   if (!visible) return null;
 
-  const items = Array.from({ length: 6 }, (_, i) => i);
   return (
     <div
       id="banner"
       ref={ref}
       data-editable-key="banner.message"
-      className="fixed top-0 left-0 right-0 z-[60] overflow-hidden bg-gradient-to-r from-[hsl(var(--accent))] via-[hsl(330_90%_55%)] to-[hsl(var(--gold))] text-white"
+      className="fixed top-0 left-0 right-0 z-[60] overflow-hidden bg-secondary text-secondary-foreground border-b border-border"
     >
-      <div className="flex whitespace-nowrap py-1.5 animate-[ticker_28s_linear_infinite] hover:[animation-play-state:paused]">
-        {items.map((i) => (
-          <button
-            type="button"
-            key={i}
-            data-editable-key="banner.message"
-            aria-label="Éditer le message de la bande défilante"
-            className="mx-8 text-xs font-medium tracking-wide uppercase cursor-pointer bg-transparent border-0 p-0 text-white hover:underline"
-          >
-            ★ {message}
-          </button>
-        ))}
-      </div>
-      <style>{`@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+      <p className="container py-2 text-center text-[10px] sm:text-xs font-medium leading-relaxed">{message}</p>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import showcase2 from "@/assets/showcase-rehab-2.jpg";
 import showcase3 from "@/assets/showcase-rehab-3.jpg";
 import showcase4 from "@/assets/showcase-rehab-4.jpg";
 import showcase5 from "@/assets/showcase-rehab-5.jpg";
+import { networkPhotos } from "./networkPhotos";
 
 export type ServiceDetail = {
   slug: string;
@@ -55,8 +56,8 @@ export const services: ServiceDetail[] = [
     title: "Câblage réseau",
     shortTitle: "Câblage structuré & réseaux data",
     location: "Lomé, Togo · Multi-sites",
-    image: cabling,
-    gallery: [cabling, showcase3, showcase1, showcase4, showcase2],
+    image: networkPhotos[0],
+    gallery: networkPhotos,
     description:
       "Câblage structuré cuivre et fibre optique — déploiements certifiés pour entreprises et administrations.",
     longDescription:

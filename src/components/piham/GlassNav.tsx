@@ -116,7 +116,7 @@ export const GlassNav = () => {
       className="fixed left-0 right-0 z-50 border-b transition-[top] duration-200"
     >
       <div className="container">
-        <nav className="flex items-center justify-between py-4">
+        <nav className="flex items-center justify-between gap-4 py-4">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
           <Link
             to="/"
@@ -147,7 +147,7 @@ export const GlassNav = () => {
           </Link>
           </motion.div>
 
-          <div ref={linksContainerRef} className="hidden md:flex items-center gap-1 relative">
+          <div ref={linksContainerRef} className="hidden xl:flex items-center gap-2 relative">
             {indicator && (
               <motion.span
                 aria-hidden
@@ -184,7 +184,7 @@ export const GlassNav = () => {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden xl:flex items-center gap-4 shrink-0">
             <ThemeToggle />
             {user ? (
               <>
@@ -217,12 +217,14 @@ export const GlassNav = () => {
             </MagneticButton>
           </div>
 
-          <div className="md:hidden flex items-center gap-2">
+          <div className="xl:hidden flex items-center gap-2 shrink-0">
             <ThemeToggle />
             <button
               onClick={() => setOpen((v) => !v)}
               className="h-10 w-10 rounded-full glass flex items-center justify-center"
               aria-label="Menu"
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
             >
               <span className="relative w-5 h-3 block">
                 <span className={`absolute left-0 top-0 w-full h-0.5 bg-foreground transition-transform duration-300 ${open ? "translate-y-1.5 rotate-45" : ""}`} />
@@ -239,7 +241,8 @@ export const GlassNav = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="md:hidden pb-4 overflow-hidden"
+            id="mobile-navigation"
+            className="xl:hidden pb-4 overflow-hidden"
           >
             <div className="rounded-2xl glass-strong p-2">
               {links.map((l, i) => (

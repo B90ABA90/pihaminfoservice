@@ -1,13 +1,14 @@
 import { useReveal } from "@/hooks/useReveal";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useEditableList } from "./Editable";
+import { resolveHeroStats } from "@/lib/heroStats";
 
 type Metric = { v: string; suffix: string; l: string };
 type TrustItem = { icon: string; t: string };
 
 const DEFAULT_METRICS: Metric[] = [
   { v: "10", suffix: "+", l: "Projets livrés" },
-  { v: "98", suffix: "%", l: "Clients satisfaits" },
+  { v: "95", suffix: "%", l: "Clients satisfaits" },
   { v: "5", suffix: "ans", l: "D'expertise terrain" },
   { v: "24", suffix: "h", l: "Réponse devis" },
 ];
@@ -21,7 +22,11 @@ const DEFAULT_TRUST: TrustItem[] = [
 export const TrustBand = () => {
   const ref = useReveal<HTMLDivElement>();
   const { content } = useSiteContent();
-  const metrics = useEditableList<Metric>("trust.metrics_json", DEFAULT_METRICS);
+  const savedMetrics = useEditableList<Metric>("trust.metrics_json", DEFAULT_METRICS);
+  const satisfaction = resolveHeroStats(content).find((s) => /satisf/i.test(s.l));
+  const metrics = savedMetrics.map((m) => /satisf/i.test(m.l) && satisfaction
+    ? { ...m, v: satisfaction.v.replace(/%$/, ""), suffix: satisfaction.v.endsWith("%") ? "%" : "" }
+    : m);
   const trustItems = useEditableList<TrustItem>("trust.items_json", DEFAULT_TRUST);
   return (
     <section id="trust" className="relative mt-12 md:mt-16 z-10">
