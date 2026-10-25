@@ -1,5 +1,6 @@
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { ReactNode, ElementType } from "react";
+import { Picture } from "./Picture";
 
 type EditableProps = {
   contentKey: string;
@@ -69,7 +70,7 @@ export const EditableImage = ({
   const src = content[contentKey] || fallback;
   const altValue = altKey ? (content[altKey] ?? alt) : alt;
   return (
-    <img
+    <Picture
       src={src}
       alt={altValue}
       data-editable-key={contentKey}

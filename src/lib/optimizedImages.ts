@@ -61,5 +61,5 @@ for (const path in defaults) {
 /** Look up the responsive `<picture>` payload for a previously-imported asset URL. */
 export function getPicture(src: string | undefined | null): PictureData | undefined {
   if (!src) return undefined;
-  return map.get(src);
+  return map.get(src) ?? map.get(src.split("?")[0]);
 }

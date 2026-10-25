@@ -11,6 +11,8 @@ import heroSlide5 from "@/assets/hero-piham-5.jpg";
 import heroSlide6 from "@/assets/hero-piham-6.jpg";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { buildWaUrl, trackWaClick } from "@/lib/whatsapp";
+import { resolveHeroStats } from "@/lib/heroStats";
+import { PausableMarquee } from "./PausableMarquee";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -63,7 +65,10 @@ const Counter = ({ value }: { value: string }) => {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [display, setDisplay] = useState(value);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || value.includes("/") || value.includes("%") || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(value);
+      return;
+    }
     const match = value.match(/^([^\d]*)(\d+(?:[.,]\d+)?)(.*)$/);
     if (!match) {
       setDisplay(value);
@@ -139,27 +144,7 @@ export const Hero = () => {
   const subtitle = (content["hero.subtitle"] ?? "Conception, construction et sécurisation d'infrastructures critiques pour les entreprises, banques et institutions d'Afrique de l'Ouest. BTP, réseaux, vidéosurveillance et sûreté incendie — livrés dans les délais, aux normes internationales.").trim();
   const ctaPrimary = (content["hero.cta_primary"] ?? "Demander une consultation").trim();
   const ctaSecondary = (content["hero.cta_secondary"] ?? "Découvrir nos références").trim();
-  // Stats: try JSON array first, fallback to 4 individual keys
-  let stats: { v: string; l: string }[] = [];
-  try {
-    const raw = content["hero.stats_json"];
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        stats = parsed
-          .map((s: any) => ({ v: String(s?.value ?? s?.v ?? "").trim(), l: String(s?.label ?? s?.l ?? "").trim() }))
-          .filter((s) => s.v || s.l);
-      }
-    }
-  } catch { /* ignore */ }
-  if (stats.length === 0) {
-    stats = [
-      { v: (content["hero.stat1_value"] ?? "10+").trim(), l: (content["hero.stat1_label"] ?? "Projets livrés").trim() },
-      { v: (content["hero.stat2_value"] ?? "5 ans").trim(), l: (content["hero.stat2_label"] ?? "d'expérience terrain").trim() },
-      { v: (content["hero.stat3_value"] ?? "95%").trim(), l: (content["hero.stat3_label"] ?? "Clients satisfaits").trim() },
-      { v: (content["hero.stat4_value"] ?? "24/7").trim(), l: (content["hero.stat4_label"] ?? "Support & maintenance").trim() },
-    ];
-  }
+  const stats = resolveHeroStats(content);
   const heroImage = (content["hero.image_url"] ?? "").trim() ? getImage("hero.image_url") : heroEditorial;
   const heroImageAlt = (content["hero.image_alt"] ?? "Visuel d'accueil").trim();
   const slideFallbacks = [heroImage, heroSlide2, heroSlide3, heroSlide4, heroSlide5, heroSlide6];
@@ -279,18 +264,19 @@ export const Hero = () => {
         {/* Massive editorial headline */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-end">
           <div className="lg:col-span-8">
-            <h1 className="font-display font-semibold text-foreground text-[10vw] sm:text-[8.5vw] lg:text-[6.4vw] leading-[1.05] tracking-[-0.035em] [hyphens:none] [word-break:normal] [overflow-wrap:normal]">
+            <h1 className="hero-heading font-display font-semibold text-foreground leading-[1.05]">
+              <span className="block mb-5 text-2xl sm:text-3xl font-medium">{brandName}</span>
               <span className="block overflow-hidden">
                 <motion.span variants={reveal} initial="hidden" animate="show" custom={0} className="block text-foreground/90">
-                  {t1}
+                  {t1}{" "}
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
                 <motion.span variants={reveal} initial="hidden" animate="show" custom={1} className="block">
-                  <span className="italic font-light text-foreground/60">{t2a}</span>
+                  <span className="italic font-light text-foreground/80">{t2a}{" "}</span>
                   <Glitch delay={0.55}>
                     <span className="bg-gradient-to-r from-[hsl(var(--accent-glow))] via-[hsl(var(--accent))] to-[hsl(var(--gold))] bg-clip-text text-transparent drop-shadow-[0_0_50px_hsl(var(--accent)/0.4)]">
-                      {t2b}
+                      {t2b}{" "}
                     </span>
                   </Glitch>
                 </motion.span>
@@ -401,33 +387,31 @@ export const Hero = () => {
       </div>
 
       {/* Marquee ticker */}
-      <div className="relative border-y border-border bg-background-elevated overflow-hidden py-6 mt-8 shadow-sm">
-        <div className="flex gap-12 animate-marquee whitespace-nowrap hover:[animation-play-state:paused]">
-          {[...Array(2)].map((_, k) => {
+      <div className="relative border-y border-border bg-background-elevated overflow-hidden py-4 mt-8 shadow-sm">
+        <PausableMarquee label="les expertises">
+          {(() => {
             const defaults = ["Génie civil", "Réhabilitation patrimoine", "Fibre optique", "Datacenter", "Routes & VRD", "Bâtiments industriels", "Réseau télécom", "Fourniture matériaux", "Maîtrise d'œuvre"];
             const words = defaults.map((d, i) => ({
               key: `hero.marquee${i + 1}`,
               text: (content[`hero.marquee${i + 1}`] ?? d).trim(),
             })).filter((w) => w.text.length > 0);
             return (
-              <div key={k} className="flex items-center gap-12 shrink-0">
+              <div className="flex items-center gap-12 shrink-0">
                 {words.map((w) => (
-                  <div key={w.key + k} className="flex items-center gap-12 text-foreground">
-                    <button
-                      type="button"
+                  <div key={w.key} className="flex items-center gap-12 text-foreground">
+                    <span
                       data-editable-key={w.key}
-                      aria-label={`Éditer ${w.text}`}
-                      className="font-display text-lg sm:text-2xl md:text-3xl tracking-tight font-medium cursor-pointer bg-transparent border-0 p-0 hover:text-[hsl(var(--accent))] transition-colors"
+                      className="font-display text-lg sm:text-xl font-medium"
                     >
                       {w.text}
-                    </button>
+                    </span>
                     <span className="text-[hsl(var(--accent))] text-2xl">✦</span>
                   </div>
                 ))}
               </div>
             );
-          })}
-        </div>
+          })()}
+        </PausableMarquee>
       </div>
 
       {/* Scroll cue */}

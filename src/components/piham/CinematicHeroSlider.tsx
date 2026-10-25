@@ -177,7 +177,7 @@ export const CinematicHeroSlider = ({
         </div>
 
         {/* Cinematic color grading & vignette */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/85 via-background/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 photo-caption-overlay" />
         {!isCoarse && (
           <div
             className="pointer-events-none absolute inset-0 mix-blend-soft-light opacity-70"
@@ -306,7 +306,7 @@ export const CinematicHeroSlider = ({
           className="absolute inset-x-4 bottom-10 flex items-end justify-between gap-3 z-10"
           style={{ transform: "translateZ(70px)" }}
         >
-          <div className="text-white overflow-hidden">
+          <div className="photo-caption-text overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`cap-${index}`}
@@ -315,7 +315,7 @@ export const CinematicHeroSlider = ({
                 exit={{ y: "-110%", opacity: 0 }}
                 transition={{ duration: 0.9, ease: EASE }}
               >
-                <div className="text-[10px] uppercase tracking-[0.3em] text-white/70 font-semibold">
+                <div className="text-[10px] uppercase tracking-[0.3em] font-semibold">
                   {cardEyebrow}
                 </div>
                 <div className="font-display text-xl md:text-2xl font-semibold mt-1 tracking-tight">

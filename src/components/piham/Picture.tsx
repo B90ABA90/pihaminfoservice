@@ -65,8 +65,6 @@ export const Picture = forwardRef<HTMLImageElement, Props>(function Picture(
   const showPlaceholder = !noPlaceholder && !!placeholder && !loaded;
   const imgStyle: CSSProperties = {
     ...(style as CSSProperties | undefined),
-    opacity: loaded ? 1 : 0,
-    transition: "opacity 400ms ease-out",
   };
   const pictureStyle: CSSProperties = {
     display: "block",
