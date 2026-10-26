@@ -1,4 +1,4 @@
-import { forwardRef, useState, type ImgHTMLAttributes, type CSSProperties } from "react";
+import { forwardRef, type ImgHTMLAttributes, type CSSProperties } from "react";
 import { getPicture } from "@/lib/optimizedImages";
 
 type Props = Omit<ImgHTMLAttributes<HTMLImageElement>, "srcSet"> & {
@@ -39,7 +39,6 @@ export const Picture = forwardRef<HTMLImageElement, Props>(function Picture(
   ref,
 ) {
   const pic = getPicture(src);
-  const [loaded, setLoaded] = useState(false);
 
   // Plain fallback for non-optimized URLs (admin uploads, externals).
   if (!pic) {
@@ -58,30 +57,20 @@ export const Picture = forwardRef<HTMLImageElement, Props>(function Picture(
     );
   }
 
-  const { sources, img, placeholder } = pic;
+  const { sources, img } = pic;
   const fallbackSrcSet = sources.jpg ?? sources.jpeg ?? sources.png;
 
-  // Compose styles: smooth fade-in as image decodes; LQIP painted underneath.
-  const showPlaceholder = !noPlaceholder && !!placeholder && !loaded;
   const imgStyle: CSSProperties = {
     ...(style as CSSProperties | undefined),
-  };
-  const pictureStyle: CSSProperties = {
-    display: "block",
-    ...(showPlaceholder
-      ? {
-          backgroundImage: `url("${placeholder}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }
-      : null),
+    opacity: 1,
+    filter: "none",
   };
 
-  // Mirror the layout className onto the <picture> so its box matches the <img>'s
-  // (so the LQIP background occupies the same area). The inner <img> keeps the
-  // same className for object-fit / sizing; harmless extra layout classes on
-  // <picture> are ignored since it's not a replaced element.
+  const pictureStyle: CSSProperties = {
+    display: "block",
+    background: "transparent",
+  };
+
   return (
     <picture className={pictureClassName ?? className} style={pictureStyle}>
       {sources.avif && <source type="image/avif" srcSet={sources.avif} sizes={sizes} />}
@@ -98,10 +87,7 @@ export const Picture = forwardRef<HTMLImageElement, Props>(function Picture(
         decoding={decoding}
         className={className}
         style={imgStyle}
-        onLoad={(e) => {
-          setLoaded(true);
-          onLoad?.(e);
-        }}
+        onLoad={onLoad}
         {...rest}
       />
     </picture>

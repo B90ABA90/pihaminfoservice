@@ -1,11 +1,10 @@
-import { lazy, Suspense, useEffect, useRef, useState, ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { GlassNav } from "@/components/piham/GlassNav";
 import { BannerTicker } from "@/components/piham/BannerTicker";
 import { Hero } from "@/components/piham/Hero";
 import { TrustBand } from "@/components/piham/TrustBand";
-import { Loader } from "@/components/piham/Loader";
 
 // Below-the-fold: split into separate chunks, mount only when near viewport.
 const Services = lazy(() => import("@/components/piham/Services").then(m => ({ default: m.Services })));
@@ -27,33 +26,9 @@ const ParallaxCard = lazy(() => import("@/components/piham/ParallaxCard").then(m
  * before the user actually scrolls — this slashes time-to-interactive on
  * older Macs / iGPUs by spreading hydration cost across the scroll.
  */
-const Defer = ({ children, minHeight = 200 }: { children: ReactNode; minHeight?: number }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    if (!ref.current || show) return;
-    const el = ref.current;
-    const lowPerf =
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("low-perf");
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setShow(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: lowPerf ? "200px 0px" : "600px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [show]);
-  return (
-    <div ref={ref} style={!show ? { minHeight, contentVisibility: "auto" as never } : undefined}>
-      {show ? <Suspense fallback={null}>{children}</Suspense> : null}
-    </div>
-  );
-};
+const Defer = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={null}>{children}</Suspense>
+);
 
 /**
  * Warm up the lazy chunks during browser idle time so that when the user
@@ -66,7 +41,7 @@ const prefetchBelowFold = () => {
   if (document.documentElement.classList.contains("low-perf")) return;
   const idle =
     (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number })
-      .requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1500));
+      .requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 0));
   idle(() => {
     void import("@/components/piham/Services");
     void import("@/components/piham/Showcase");
@@ -333,7 +308,6 @@ const Index = () => {
 
   return (
     <main className="relative bg-background text-foreground overflow-x-hidden">
-      <Loader />
       <BannerTicker />
       <GlassNav />
       <Hero />

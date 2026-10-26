@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, type Variants, useMotionValue, useSpring, useTransform, useInView, animate } from "framer-motion";
+import { motion, type Variants, useMotionValue, useSpring, useTransform, useInView, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MagneticButton } from "./MagneticButton";
@@ -17,41 +17,37 @@ import { PausableMarquee } from "./PausableMarquee";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 48, filter: "blur(14px)", scale: 0.96 },
+  hidden: { opacity: 0, y: 12, scale: 1 },
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     scale: 1,
-    transition: { duration: 1.1, delay: 0.15 + i * 0.11, ease: EASE },
+    transition: { duration: 0.4, delay: Math.min(i * 0.04, 0.12), ease: "easeOut" },
   }),
 };
 
 const reveal: Variants = {
-  hidden: { y: "110%", skewY: 6, opacity: 0.4 },
+  hidden: { y: 12, opacity: 0 },
   show: (i: number = 0) => ({
-    y: "0%",
-    skewY: 0,
+    y: 0,
     opacity: 1,
-    transition: { duration: 1.2, delay: 0.2 + i * 0.14, ease: EASE },
+    transition: { duration: 0.4, delay: Math.min(i * 0.04, 0.12), ease: "easeOut" },
   }),
 };
 
 // Glitch + zoom title wrapper
 const Glitch = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
   <motion.span
-    initial={{ opacity: 0, scale: 1.18, filter: "blur(18px)" }}
+    initial={false}
     animate={{
       opacity: 1,
       scale: 1,
-      filter: "blur(0px)",
-      x: [0, -3, 3, -1, 0],
+      x: [0, -2, 2, -1, 0],
     }}
     transition={{
-      opacity: { duration: 0.9, delay, ease: EASE },
-      scale: { duration: 1.4, delay, ease: EASE },
-      filter: { duration: 1.0, delay, ease: EASE },
-      x: { duration: 0.45, delay: delay + 0.3, times: [0, 0.25, 0.5, 0.75, 1] },
+      opacity: { duration: 0.2, delay, ease: "easeOut" },
+      scale: { duration: 0.2, delay, ease: "easeOut" },
+      x: { duration: 0.25, delay: delay + 0.1, times: [0, 0.25, 0.5, 0.75, 1] },
     }}
     className="inline-block"
   >
@@ -91,46 +87,11 @@ const Counter = ({ value }: { value: string }) => {
   return <span ref={ref}>{display}</span>;
 };
 
-// 3D tilt card driven by mouse position. No-op on mobile/touch.
+// Keep imagery direct and instant; no tilt, no radial veil, no blur behind the image.
 const TiltCard = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useIsMobile();
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [10, -10]), { stiffness: 150, damping: 18 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-12, 12]), { stiffness: 150, damping: 18 });
-  const sx = useSpring(useTransform(mx, [0, 1], ["0%", "100%"]), { stiffness: 200, damping: 25 });
-  const sy = useSpring(useTransform(my, [0, 1], ["0%", "100%"]), { stiffness: 200, damping: 25 });
-  // IMPORTANT: every hook must be called unconditionally above any early return,
-  // otherwise React throws "Rendered fewer hooks than expected" when isMobile flips.
-  const overlayBg = useTransform(
-    [sx, sy] as any,
-    ([x, y]: any) => `radial-gradient(circle at ${x} ${y}, hsl(var(--accent) / 0.45), transparent 55%)`
-  );
   if (isMobile) return <div className="relative">{children}</div>;
-  const onMove = (e: React.MouseEvent) => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    mx.set((e.clientX - r.left) / r.width);
-    my.set((e.clientY - r.top) / r.height);
-  };
-  const onLeave = () => { mx.set(0.5); my.set(0.5); };
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d", perspective: 1200 }}
-      className="relative"
-    >
-      {children}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-3xl mix-blend-overlay opacity-70"
-        style={{ background: overlayBg }}
-      />
-    </motion.div>
-  );
+  return <div className="relative">{children}</div>;
 };
 
 export const Hero = () => {
@@ -194,12 +155,12 @@ export const Hero = () => {
   // Cycle slides; key on slideIndex via a resettable interval (manual clicks restart timing)
   const [cycleTick, setCycleTick] = useState(0);
   useEffect(() => {
-    if (heroSlides.length <= 1 || !allLoaded) return;
+    if (heroSlides.length <= 1) return;
     const id = setTimeout(() => {
       setSlideIndex((i) => (i + 1) % heroSlides.length);
     }, SLIDE_DURATION);
     return () => clearTimeout(id);
-  }, [slideIndex, cycleTick, heroSlides.length, allLoaded]);
+  }, [slideIndex, cycleTick, heroSlides.length]);
   const goToSlide = (i: number) => {
     setSlideIndex(i);
     setCycleTick((t) => t + 1);
@@ -210,26 +171,6 @@ export const Hero = () => {
       {/* Atmospheric background */}
       <div className="absolute inset-0 -z-10 bg-background">
         <div className="absolute inset-0 opacity-90" style={{ background: "var(--gradient-mesh)" }} />
-        {!isMobile && (
-          <>
-            <motion.div
-              aria-hidden
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.55, x: [0, 50, 0], y: [0, -40, 0] }}
-              transition={{ opacity: { duration: 1.8 }, x: { duration: 22, repeat: Infinity, ease: "easeInOut" }, y: { duration: 26, repeat: Infinity, ease: "easeInOut" } }}
-              className="absolute top-[12%] left-[6%] h-[520px] w-[520px] rounded-full blur-3xl"
-              style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.55), transparent 70%)" }}
-            />
-            <motion.div
-              aria-hidden
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.45, x: [0, -60, 0], y: [0, 50, 0] }}
-              transition={{ opacity: { duration: 1.8, delay: 0.4 }, x: { duration: 28, repeat: Infinity, ease: "easeInOut" }, y: { duration: 24, repeat: Infinity, ease: "easeInOut" } }}
-              className="absolute bottom-[-5%] right-[-5%] h-[600px] w-[600px] rounded-full blur-3xl"
-              style={{ background: "radial-gradient(circle, hsl(var(--gold) / 0.50), transparent 70%)" }}
-            />
-          </>
-        )}
         <div
           className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none"
           style={{
@@ -243,7 +184,7 @@ export const Hero = () => {
         {/* Eyebrow live indicator */}
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="show"
           custom={0}
           className="flex flex-wrap items-center gap-3 mb-8"
@@ -267,14 +208,14 @@ export const Hero = () => {
             <h1 className="hero-heading font-display font-semibold text-foreground leading-[1.05]">
               <span className="block mb-5 text-2xl sm:text-3xl font-medium">{brandName}</span>
               <span className="block overflow-hidden">
-                <motion.span variants={reveal} initial="hidden" animate="show" custom={0} className="block text-foreground/90">
+                <motion.span variants={reveal} initial={false} animate="show" custom={0} className="block text-foreground/90">
                   {t1}{" "}
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
-                <motion.span variants={reveal} initial="hidden" animate="show" custom={1} className="block">
+                <motion.span variants={reveal} initial={false} animate="show" custom={1} className="block">
                   <span className="italic font-light text-foreground/80">{t2a}{" "}</span>
-                  <Glitch delay={0.55}>
+                  <Glitch delay={0}>
                     <span className="bg-gradient-to-r from-[hsl(var(--accent-glow))] via-[hsl(var(--accent))] to-[hsl(var(--gold))] bg-clip-text text-transparent drop-shadow-[0_0_50px_hsl(var(--accent)/0.4)]">
                       {t2b}{" "}
                     </span>
@@ -282,7 +223,7 @@ export const Hero = () => {
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
-                <motion.span variants={reveal} initial="hidden" animate="show" custom={2} className="block text-foreground/85">
+                <motion.span variants={reveal} initial={false} animate="show" custom={2} className="block text-foreground/85">
                   {t3}
                 </motion.span>
               </span>
@@ -292,7 +233,7 @@ export const Hero = () => {
           {/* Editorial image card */}
           <motion.div
             variants={fadeUp}
-            initial="hidden"
+            initial={false}
             animate="show"
             custom={3}
             className="lg:col-span-4 relative"
@@ -318,7 +259,7 @@ export const Hero = () => {
         {/* Sub copy + CTAs row */}
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="show"
           custom={5}
           className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-8 border-t border-border"
@@ -362,7 +303,7 @@ export const Hero = () => {
         {/* Stats premium — entreprises, banques, institutions */}
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={false}
           animate="show"
           custom={6}
           className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4"

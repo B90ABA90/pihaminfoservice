@@ -94,36 +94,15 @@ const CinematicCard = ({
       onMouseLeave={() => onHover(null)}
       aria-label={`Ouvrir ${item.title}`}
       style={{
-        transformStyle: "preserve-3d",
-        rotateX,
-        rotateY,
-        z: translateZ,
-        scale: isHovered ? 1.06 : isOther ? 0.97 : 1.0,
-        filter: isOther ? "blur(3px) brightness(0.7)" : "blur(0px) brightness(1)",
-        opacity: isOther ? 0.65 : 1,
-        zIndex: isHovered ? 50 : 1,
-        willChange: "transform, filter",
+        transform: isHovered ? "scale(1.02)" : isOther ? "scale(0.98)" : "scale(1)",
+        opacity: isOther ? 0.8 : 1,
+        zIndex: isHovered ? 10 : 1,
       }}
       transition={{ type: "spring", ...SPRING }}
       data-editable-key={imgKey}
-      className={`group relative text-left rounded-2xl overflow-hidden bg-card border border-border/60 [transform-style:preserve-3d] h-full min-h-[12rem] sm:min-h-[14rem] lg:min-h-[16rem] ${spanClass}`}
+      className={`group relative text-left rounded-2xl overflow-hidden bg-card border border-border/60 h-full min-h-[12rem] sm:min-h-[14rem] lg:min-h-[16rem] ${spanClass}`}
     >
-      {/* Ambient glow halo */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          background:
-            "radial-gradient(60% 60% at 50% 50%, hsl(var(--accent) / 0.45), transparent 70%)",
-          filter: "blur(28px)",
-          zIndex: -1,
-        }}
-      />
-
-      <div
-        className="relative h-full w-full overflow-hidden"
-        style={{ transform: "translateZ(40px)", transformStyle: "preserve-3d" }}
-      >
+      <div className="relative h-full w-full overflow-hidden">
         <motion.div
           className="absolute inset-0 h-full w-full"
           style={{
@@ -170,8 +149,7 @@ const CinematicCard = ({
 
         {/* Tag chip */}
         <div
-          className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-white/95 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3 sm:py-1.5 text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.18em] font-semibold text-neutral-900"
-          style={{ transform: "translateZ(60px)" }}
+          className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-white/95 rounded-full px-2 py-1 sm:px-3 sm:py-1.5 text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.18em] font-semibold text-neutral-900"
         >
           {item.tag}
         </div>

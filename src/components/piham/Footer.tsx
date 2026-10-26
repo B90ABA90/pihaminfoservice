@@ -49,7 +49,7 @@ export const Footer = () => {
       className="relative isolate overflow-hidden text-white"
       style={{
         background:
-          "radial-gradient(120% 80% at 0% 0%, hsl(8 92% 22% / 0.55), transparent 55%), radial-gradient(80% 60% at 100% 100%, hsl(36 75% 35% / 0.35), transparent 60%), linear-gradient(180deg, hsl(24 12% 7%) 0%, hsl(24 14% 4%) 100%)",
+          "radial-gradient(120% 80% at 0% 0%, rgba(23, 105, 170, 0.28), transparent 55%), radial-gradient(80% 60% at 100% 100%, rgba(245, 158, 11, 0.18), transparent 60%), linear-gradient(180deg, #102B5C 0%, #0a1d3d 100%)",
       }}
     >
       {/* Top hairline accent */}

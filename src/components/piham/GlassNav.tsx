@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MagneticButton } from "./MagneticButton";
 import { ThemeToggle } from "./ThemeToggle";
@@ -21,7 +21,6 @@ export const GlassNav = () => {
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
   const linksRef = useRef<Record<string, HTMLButtonElement | null>>({});
   const linksContainerRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
@@ -100,20 +99,13 @@ export const GlassNav = () => {
     setIndicator({ left: br.left - cr.left, width: br.width });
   }, [hovered, activeHash, location.pathname]);
 
-  const blurPx = useTransform(scrollY, [0, 200], [6, 16]);
-  const backdropFilter = useMotionTemplate`blur(${blurPx}px) saturate(160%)`;
-  const bgAlpha = useTransform(scrollY, [0, 200], [0.25, 0.7]);
-  const backgroundColor = useMotionTemplate`hsl(${navHsl} / ${bgAlpha})`;
-  const borderAlpha = useTransform(scrollY, [0, 200], [0.04, 0.1]);
-  const borderColor = useMotionTemplate`hsl(0 0% 50% / ${borderAlpha})`;
-
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
+      initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      style={{ backdropFilter, WebkitBackdropFilter: backdropFilter, backgroundColor, borderColor, top: "var(--banner-h, 0px)" }}
-      className="fixed left-0 right-0 z-50 border-b transition-[top] duration-200"
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      style={{ backgroundColor: `hsl(${navHsl} / 0.72)`, borderColor: "hsl(0 0% 50% / 0.08)", top: "var(--banner-h, 0px)" }}
+      className="fixed left-0 right-0 z-50 border-b backdrop-blur-md transition-[top] duration-200"
     >
       <div className="container">
         <nav className="flex items-center justify-between gap-4 py-4">

@@ -111,15 +111,9 @@ export const CinematicCard = ({
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
       style={{
-        transformStyle: "preserve-3d",
-        rotateX,
-        rotateY,
-        z,
-        scale: isHovered ? 1 + 0.06 * intensity : isOther ? 1 - 0.03 * intensity : 1,
-        filter: isOther ? `blur(${3 * intensity}px) brightness(0.72)` : "blur(0px) brightness(1)",
-        opacity: isOther ? 0.7 : 1,
-        zIndex: isHovered ? 50 : 1,
-        willChange: "transform, filter",
+        transform: isHovered ? "scale(1.02)" : isOther ? "scale(0.98)" : "scale(1)",
+        opacity: isOther ? 0.8 : 1,
+        zIndex: isHovered ? 10 : 1,
         position: "relative",
       }}
       transition={{ type: "spring", ...SPRING }}
