@@ -180,7 +180,7 @@
     --sidebar-border: 30 12% 87%;
   }
 
-  html { color-scheme: dark; }
+  html { color-scheme: light; }
   html.light { color-scheme: light; }
 }
 
