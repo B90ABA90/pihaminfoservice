@@ -30,7 +30,8 @@ const pictures = import.meta.glob("/src/assets/*.{jpg,jpeg,png}", {
   import: "default",
   query: {
     format: "avif;webp;jpg",
-    w: "480;800;1200;1600",
+    w: "480;800;1200",
+    quality: "72",
     as: "picture",
   },
 }) as Record<string, Omit<PictureData, "placeholder">>;
