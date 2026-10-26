@@ -1,6 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 
 type Theme = "dark" | "light";
 
@@ -11,11 +9,6 @@ type ThemeContextValue = {
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-
-const getInitialTheme = (): Theme => {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-};
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Site is light-only.
