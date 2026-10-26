@@ -21,7 +21,9 @@ export const initPerfDetection = () => {
 
   // Heuristic: iMac 2014 / older laptops typically report 4 cores & 4-8GB.
   // We treat <=4 cores OR <=4GB RAM OR explicit data-saver as low-perf.
-  if (cores <= 4 || mem <= 4 || saveData || slowNet || reduce) {
+  // Always use the lightweight effects profile: smooth scrolling everywhere.
+  void cores; void mem; void saveData; void slowNet; void reduce;
+  {
     html.classList.add("low-perf");
   }
 };
