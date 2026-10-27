@@ -129,7 +129,7 @@ const Auth = () => {
           <img
             src="/logo.png"
             alt="Logo PIHAM Info Services"
-            className="h-12 w-12 rounded-2xl object-contain shadow-[0_0_24px_hsl(var(--accent)/0.25)]"
+            className="h-16 w-16 rounded-2xl object-contain shadow-[0_0_24px_hsl(var(--accent)/0.25)]"
           />
           <div>
             <h1 className="font-display text-2xl font-semibold text-foreground leading-tight">Espace client</h1>
