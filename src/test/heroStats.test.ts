@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { initPerfDetection } from "../lib/perf";
 import { resolveHeroStats } from "../lib/heroStats";
 
 describe("Audit availability correction", () => {
@@ -10,5 +11,15 @@ describe("Audit availability correction", () => {
   });
   it("preserves supplied satisfaction rather than inventing a replacement", () => {
     expect(resolveHeroStats({ "hero.stats_json": JSON.stringify([{ value: "91%", label: "Clients satisfaits" }]) })[0].v).toBe("91%");
+  });
+});
+
+describe("Performance profile detection", () => {
+  it("does not force the low-performance mode on a normal desktop browser", () => {
+    document.documentElement.classList.remove("low-perf");
+
+    initPerfDetection();
+
+    expect(document.documentElement.classList.contains("low-perf")).toBe(false);
   });
 });

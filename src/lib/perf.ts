@@ -1,12 +1,13 @@
 /**
- * Detect low-performance devices and tag <html class="low-perf">.
- * Triggers on: low CPU core count, low device memory, reduced-motion request,
- * or a slow first frame (proxy for older GPUs like 2014 iMacs).
+ * Detect low-performance devices and tag <html class="low-perf"> only when
+ * the device really matches the conservative triggers we care about.
+ * For regular desktop/mobile hardware, we keep the full experience and smooth
+ * scrolling active so the site feels responsive and polished.
  */
 export const initPerfDetection = () => {
   if (typeof document === "undefined") return;
-  const html = document.documentElement;
 
+  const html = document.documentElement;
   const nav = navigator as Navigator & {
     deviceMemory?: number;
     hardwareConcurrency?: number;
@@ -19,11 +20,12 @@ export const initPerfDetection = () => {
   const slowNet = /(^|-)2g$/.test(nav.connection?.effectiveType ?? "");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Heuristic: iMac 2014 / older laptops typically report 4 cores & 4-8GB.
-  // We treat <=4 cores OR <=4GB RAM OR explicit data-saver as low-perf.
-  // Always use the lightweight effects profile: smooth scrolling everywhere.
-  void cores; void mem; void saveData; void slowNet; void reduce;
-  {
-    html.classList.add("low-perf");
-  }
+  const isLowPerfDevice =
+    cores <= 4 ||
+    mem <= 4 ||
+    saveData ||
+    slowNet ||
+    reduce;
+
+  html.classList.toggle("low-perf", isLowPerfDevice);
 };
