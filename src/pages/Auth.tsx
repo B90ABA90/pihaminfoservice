@@ -126,9 +126,11 @@ const Auth = () => {
       <div className="w-full max-w-md rounded-3xl border border-border bg-card/80 backdrop-blur-xl p-8 shadow-elevated">
         <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">← Retour</Link>
         <div className="mt-4 flex items-center gap-3">
-          <span className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[hsl(var(--accent))] via-[hsl(330_90%_55%)] to-[hsl(var(--gold))] flex items-center justify-center shadow-[0_0_24px_hsl(var(--accent)/0.4)]">
-            <span className="text-white font-display font-bold text-lg">P</span>
-          </span>
+          <img
+            src="/logo.png"
+            alt="Logo PIHAM Info Services"
+            className="h-12 w-12 rounded-2xl object-contain shadow-[0_0_24px_hsl(var(--accent)/0.25)]"
+          />
           <div>
             <h1 className="font-display text-2xl font-semibold text-foreground leading-tight">Espace client</h1>
             <p className="text-xs text-muted-foreground">Authentification sécurisée PIHAM</p>
