@@ -26,8 +26,8 @@ const ParallaxCard = lazy(() => import("@/components/piham/ParallaxCard").then(m
  * before the user actually scrolls — this slashes time-to-interactive on
  * older Macs / iGPUs by spreading hydration cost across the scroll.
  */
-const Defer = ({ children }: { children: ReactNode }) => (
-  <Suspense fallback={null}>{children}</Suspense>
+const Defer = ({ children, minHeight }: { children: ReactNode; minHeight?: number }) => (
+  <Suspense fallback={<div style={minHeight ? { minHeight } : undefined} aria-hidden="true" />}>{children}</Suspense>
 );
 
 /**
