@@ -1,10 +1,5 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { corsHeaders as cors } from "npm:@supabase/supabase-js@2/cors";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -34,9 +29,10 @@ function genPassword() {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   try {
-    const url = Deno.env.get("SUPABASE_URL")!;
-    const anon = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!;
-    const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const url = Deno.env.get("SUPABASE_URL");
+    const anon = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
+    const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !anon || !service) return json({ error: "Configuration incomplète" }, 500);
 
     const authHeader = req.headers.get("Authorization") ?? "";
     const userClient = createClient(url, anon, { global: { headers: { Authorization: authHeader } } });
