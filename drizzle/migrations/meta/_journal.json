@@ -15,6 +15,13 @@
       "when": 1793166390269,
       "tag": "0001_restore_application_api_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793166522238,
+      "tag": "0002_restore_admin_site_asset_read",
+      "breakpoints": true
     }
   ]
 }
