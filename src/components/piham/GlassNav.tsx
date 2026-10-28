@@ -25,7 +25,7 @@ export const GlassNav = () => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
   const { content, getImage } = useSiteContent();
-  const logoUrl = (content["brand.logo_url"] ?? "").trim() ? getImage("brand.logo_url") : "";
+  const logoUrl = (content["brand.logo_url"] ?? "").trim() ? getImage("brand.logo_url") : "/logo.png";
   const brandName = (content["brand.name"] ?? "PIHAM").trim();
   const brandTag = (content["brand.tagline"] ?? "Info Services").trim();
   
@@ -126,11 +126,15 @@ export const GlassNav = () => {
               transition={{ duration: 0.6 }}
               className="h-12 w-12 rounded-xl bg-white flex items-center justify-center shadow-[0_0_24px_hsl(var(--accent)/0.35)] overflow-hidden p-0.5 ring-1 ring-white/70"
             >
-              {logoUrl ? (
-                <img src={logoUrl} alt={brandName} className="h-full w-full object-contain" />
-              ) : (
-                <span className="text-primary font-display font-bold text-lg">{brandName.charAt(0) || "P"}</span>
-              )}
+              <img
+                src={logoUrl || "/logo.png"}
+                alt="Logo PIHAM Info Services"
+                className="h-full w-full object-contain"
+                onError={(event) => {
+                  const image = event.currentTarget;
+                  if (image.getAttribute("src") !== "/logo.png") image.src = "/logo.png";
+                }}
+              />
             </motion.span>
             <div className="leading-tight">
               <div className="font-display font-semibold tracking-tight text-base text-foreground">{brandName}</div>
